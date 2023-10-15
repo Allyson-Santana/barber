@@ -6,7 +6,7 @@ $ git clone
 # Entre na pasta do projeto
 $ cd barber
 
-# Crie um ambiente virtual
+# Instale os pacotes NPMs
 $ npm install
 
 # Execute a aplicação
