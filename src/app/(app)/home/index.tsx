@@ -4,7 +4,7 @@ import {
     View,
     Text
 } from "react-native";
-import BasePage from "@/app/app.base";
+import BasePage from "@/app.base";
 import RecentSchedulingCard from "@components/recent-scheduling-card";
 import CurrentSchedulingCard from "@components/current-scheduling-card";
 

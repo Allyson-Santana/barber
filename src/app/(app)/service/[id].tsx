@@ -3,13 +3,16 @@ import {
     View,
     Text
 } from "react-native";
-import BasePage from "@/app/app.base";
+import BasePage from "@/app.base";
+import { useLocalSearchParams } from "expo-router";
 
 export default function Service() {
+    const { id } = useLocalSearchParams()
+
     return (
         <BasePage>
             <View style={styles.container}>
-                <Text>Service</Text>
+                <Text>Service With id {id}</Text>
             </View>
         </BasePage>
     )

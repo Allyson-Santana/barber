@@ -8,7 +8,7 @@ import {
     TouchableOpacity,
 } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
-import BasePage from "@/app/app.base";
+import BasePage from "@/app.base";
 import { photo_profile_default } from "@/assets";
 
 type errors = {
@@ -31,7 +31,7 @@ export default function Profile() {
         errors: { name: [], email: [], phone: [] }
     })
 
-    useEffect(() => {}, [])
+    useEffect(() => { }, [])
 
     const _valitedEmail = (_email: string): boolean => {
         // TODO: Validate E-mail
