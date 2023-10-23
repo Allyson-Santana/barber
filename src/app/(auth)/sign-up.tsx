@@ -1,16 +1,16 @@
 import React, { useState } from 'react';
 import { View, Text, TextInput, Button, StyleSheet } from 'react-native';
-import { signInWithEmailAndPassword } from "firebase/auth";
+import { createUserWithEmailAndPassword } from "firebase/auth";
 import { auth } from "@/config/firebaseConfig"
 
 export default function LoginScreen() {
     const [email, setEmail] = useState<string>('');
     const [password, setPassword] = useState<string>('');
 
-    const handleSignIn = () => {
-        signInWithEmailAndPassword(auth, email, password)
+    const handleSignUp = () => {
+        createUserWithEmailAndPassword(auth, email, password)
             .then((userCredential) => {
-                const user = userCredential.user
+                // const user = userCredential.user
                 console.log(userCredential);
             })
             .catch((error) => {
@@ -23,7 +23,7 @@ export default function LoginScreen() {
 
     return (
         <View style={styles.container}>
-            <Text style={{ textAlign: 'center', marginBottom: 20}}> LOGIN USER </Text>
+            <Text style={{ textAlign: 'center', marginBottom: 20 }}> CREATE USER </Text>
             <Text style={styles.label}>Email:</Text>
             <TextInput
                 style={styles.input}
@@ -39,7 +39,7 @@ export default function LoginScreen() {
                 secureTextEntry
                 placeholder="Digite sua senha"
             />
-            <Button title="Login" onPress={handleSignIn} />
+            <Button title="Login" onPress={handleSignUp} />
         </View>
     );
 };
