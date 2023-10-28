@@ -1,25 +1,17 @@
 import React, { useState } from 'react';
 import { View, Text, TextInput, Button, StyleSheet } from 'react-native';
-import { signInWithEmailAndPassword } from "firebase/auth";
-import { auth } from "@/config/firebaseConfig"
+import { useAuth } from '@/context/AuthContext';
+import { router } from 'expo-router';
 
 export default function LoginScreen() {
     const [email, setEmail] = useState<string>('');
     const [password, setPassword] = useState<string>('');
+    const { onSignIn } = useAuth();
 
-    const handleSignIn = () => {
-        signInWithEmailAndPassword(auth, email, password)
-            .then((userCredential) => {
-                const user = userCredential.user
-                console.log(userCredential);
-            })
-            .catch((error) => {
-                const errorCode = error.code;
-                const errorMessage = error.message;
-                // TODO: error handling and preview Error for user
-                console.error({ errorCode, errorMessage })
-            });
-    };
+    const handleSignIn = async () => {
+        const result = await onSignIn(email, password);
+        if (result) return router.replace("/home/");
+    } 
 
     return (
         <View style={styles.container}>

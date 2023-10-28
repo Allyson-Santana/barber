@@ -5,39 +5,15 @@ import {
     FontAwesome,
     AntDesign
 } from "@expo/vector-icons";
-import { Text } from "react-native";
-import { useSession } from "@/ctx";
-
-//     // onAuthStateChanged(auth, (user) => {
-//     //     if (user) {
-//     //         // User is signed in, see docs for a list of available properties
-//     //         // https://firebase.google.com/docs/reference/js/auth.user
-//     //         const uid = user.uid;
-//     //         // ...
-//     //     } else {
-//     //         // User is signed out
-//     //         // ...
-//     //     }
-//     // });
-    
+import { useAuth } from "@/context/AuthContext";
 
 export default function AppLayout() {
-    const { session, isLoading } = useSession();
-
-    // You can keep the splash screen open, or render a loading screen like we do here.
-    if (isLoading) {
-        return <Text>Loading...</Text>;
-    }
-
-    // Only require authentication within the (app) group's layout as users
-    // need to be able to access the (auth) group and sign in again.
-    if (!session) {
-        // On web, static rendering will stop here as the user is not authenticated
-        // in the headless Node process that the pages are rendered in.
+    const { authState } = useAuth();
+    
+    if (!authState?.authenticated) {
         return <Redirect href="/sign-in" />;
     }
 
-    // This layout can be deferred because it's not the root layout.
     return (
         <Tabs screenOptions={{
             headerShown: false,
@@ -55,8 +31,6 @@ export default function AppLayout() {
             <Tabs.Screen
                 name="service"
                 options={{
-                    // href: "/service",
-                    // title: "Service",
                     tabBarLabel: "Service",
                     tabBarIcon: ({ color, size }) => (
                         <FontAwesome name="calendar" size={size} color={color} />
