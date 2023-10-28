@@ -1,6 +1,6 @@
 import { StyleSheet, View, Text } from "react-native";
 import { FontAwesome } from '@expo/vector-icons';
-import { textTruncation } from "../utils/format-text";
+import { textTruncation } from "../utils/formatText";
 
 type props = {
     id: number,
