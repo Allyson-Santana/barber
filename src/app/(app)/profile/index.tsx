@@ -10,6 +10,8 @@ import {
 import * as ImagePicker from 'expo-image-picker';
 import BasePage from "@/app.base";
 import { photo_profile_default } from "@/assets";
+import { auth } from '@/config/firebaseConfig';
+import { User } from 'firebase/auth';
 
 type errors = {
     status: boolean,
@@ -20,25 +22,57 @@ type errors = {
     }
 }
 type propsPreviewErrors = Omit<errors, 'status'>;
+type user = Pick<User, 'displayName' | 'email' | 'phoneNumber'>
 
 export default function Profile() {
     const [photo, setPhoto] = useState<string>();
-    const [name, setName] = useState<string>('John Doe');
-    const [email, setEmail] = useState<string>('john@example.com');
-    const [phone, setPhone] = useState<string>('123-456-7890');
+    const [profileData, setProfileData] = useState<user>({
+        displayName: null,
+        email: null,
+        phoneNumber: null
+    })
+
+    const handleChangeProfileData = (name: string, value: string) => {
+        if (name === 'phone') {
+            // TODO: Format number to preview
+        }
+        setProfileData(prevState => ({ ...prevState, [name]: value }))
+    }
+
     const [errors, setErros] = useState<errors>({
         status: true,
         errors: { name: [], email: [], phone: [] }
     })
 
-    useEffect(() => { }, [])
+    useEffect(() => {
+        const unsubscribe = auth.onAuthStateChanged(async (user) => {
+            if (user) {
+                // O usuário está autenticado
+                const displayName = user.displayName || 'John Doe';
+                const email = user.email || 'john@example.com';
+                const phone = user.phoneNumber || '123-456-7890';
 
-    const _valitedEmail = (_email: string): boolean => {
+                setProfileData({
+                    displayName: displayName,
+                    email: email,
+                    phoneNumber: phone,
+                });
+            }
+        });
+
+        return () => unsubscribe(); 
+    }, []);
+
+
+
+    const _valitedEmail = (_email: string | null): boolean => {
+        if (!_email) return false
         // TODO: Validate E-mail
         return _email.length > 0
     }
 
-    const _validatePhone = (_phone: string): boolean => {
+    const _validatePhone = (_phone: string | null): boolean => {
+        if (!_phone) return false
         // TODO: Validate Phone
         const tel = _phone.replace(/\D/g, '');
         return tel.length === 11
@@ -50,23 +84,28 @@ export default function Profile() {
             errors: { name: [], email: [], phone: [] }
         }
 
-        if (name.length > 30) {
+        if (!profileData.displayName) {
             _errors.status = false
-            _errors.errors.name.push("Nome excedeu o limite de 30 caracteres.");
-        }
+            _errors.errors.name.push("Nome é obrigatório.");
+        } else {
+            if (profileData.displayName.length > 30) {
+                _errors.status = false
+                _errors.errors.name.push("Nome excedeu o limite de 30 caracteres.");
+            }
 
-        if (name.length < 3) {
-            _errors.status = false
-            _errors.errors.name.push("Nome deve conte pelo menos 3 caracteres.");
+            if (profileData.displayName.length < 3) {
+                _errors.status = false
+                _errors.errors.name.push("Nome deve conte pelo menos 3 caracteres.");
+            }
         }
-
-        let isValidEmail = _valitedEmail(email);
+        
+        let isValidEmail = _valitedEmail(profileData.email);
         if (!isValidEmail) {
             _errors.status = false
             _errors.errors.email.push("E-mail informado é inválido.");
         }
 
-        let isValidPhone = _validatePhone(phone);
+        let isValidPhone = _validatePhone(profileData.phoneNumber);
         if (!isValidPhone) {
             _errors.status = false
             _errors.errors.phone.push("Número de celular inválido.");
@@ -112,21 +151,21 @@ export default function Profile() {
 
                 <View style={styles.area_input}>
                     <TextInput
-                        value={name}
-                        onChangeText={setName}
+                        value={profileData.displayName || ''}
+                        onChangeText={text => handleChangeProfileData('name', text)}
                         placeholder="Nome"
                         style={styles.input}
                     />
                     <TextInput
-                        value={email}
-                        onChangeText={setEmail}
-                        placeholder="Nome"
+                        value={profileData.email || ''}
+                        onChangeText={text => handleChangeProfileData('email', text)}
+                        placeholder="E-mail"
                         style={styles.input}
                     />
                     <TextInput
-                        value={phone}
-                        onChangeText={setPhone}
-                        placeholder="Nome"
+                        value={profileData.phoneNumber || ''}
+                        onChangeText={text => handleChangeProfileData('phone', text)}
+                        placeholder="Telefone"
                         style={styles.input}
                     />
                 </View>
