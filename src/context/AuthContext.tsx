@@ -14,10 +14,10 @@ type Tuser = {
     authenticated: boolean | null
 }
 
-interface Tcontext  {
-    onSignIn: (email: string, password: string) => Promise<any>;
-    onRegister: (email: string, password: string) => Promise<any>;
-    onSignOut: () => Promise<any>;
+interface Tcontext {
+    onSignIn: (email: string, password: string) => Promise<boolean>;
+    onRegister: (email: string, password: string) => Promise<boolean>;
+    onSignOut: () => Promise<boolean>;
     authState: Tuser;
 }
 
@@ -28,9 +28,9 @@ type BasePageProps = {
 const TOKEN = "token";
 
 const AuthContext = createContext<Tcontext>({
-    onSignIn: async () => {},
-    onRegister: async () => {}, 
-    onSignOut: async () => {}, 
+    onSignIn: async () => false,
+    onRegister: async () => false,
+    onSignOut: async () => false,
     authState: { authenticated: false, token: null }
 });
 
@@ -42,29 +42,29 @@ export function AuthProvider({ children }: BasePageProps) {
         authenticated: false,
         token: null
     });
-    
+
     useEffect(() => {
-        const token = useStorageState(TOKEN);
-        if (token) {
-            setAuthState({
-                authenticated: true,
-                token: token
-            });
-        }
+        useStorageState(TOKEN).then(token => {
+            if (token) {
+                setAuthState({
+                    authenticated: true,
+                    token: token
+                });
+            }
+        });
     }, [])
 
-    const handleSignIn = async (email: string, password: string) => {
+    const handleSignIn = async (email: string, password: string): Promise<boolean> => {
         try {
             const userCredential = await signInWithEmailAndPassword(auth, email, password);
             const user = userCredential.user
             const token = await user.getIdToken();
-            
+
             setStorageItemAsync(TOKEN, token)
-            setAuthState({authenticated: true, token: token});
+            setAuthState({ authenticated: true, token: token });
 
             return true
         } catch (error: any) {
-            console.error("ERROR <handleSignIn>: ", error.stack)
             const errorCode = error.code;
             const errorMessage = error.message;
             // TODO: error handling and preview Error for user
@@ -73,35 +73,33 @@ export function AuthProvider({ children }: BasePageProps) {
         }
     }
 
-    const handleRegister = async (email: string, password: string) => {
+    const handleRegister = async (email: string, password: string): Promise<boolean> => {
         try {
-            console.log("Call >>> handleRegister")
             const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-            console.log(userCredential);
+            
+            return true
         } catch (error: any) {
             console.error("ERROR <handleRegister>: ", error.stack);
             const errorCode = error.code;
             const errorMessage = error.message;
             // TODO: error handling and preview Error for user
             console.error({ errorCode, errorMessage })
+            return false
         }
-        
+
     }
 
-    const handleSignOut = async () => {
+    const handleSignOut = async (): Promise<boolean> => {
         try {
-            setAuthState({
-                authenticated: false,
-                token: null
-            })
+            setAuthState({ authenticated: false, token: null });
             setStorageItemAsync(TOKEN, null)
+            return true;
         } catch (error: any) {
-            console.error("ERROR <handleSignOut>: ", error.stack)
-            
             const errorCode = error.code;
             const errorMessage = error.message;
             // TODO: error handling and preview Error for user
             console.error({ errorCode, errorMessage })
+            return false;
         }
     }
 

@@ -1,7 +1,7 @@
 import * as SecureStore from "expo-secure-store";
 import { Platform } from "react-native";
 
-export async function setStorageItemAsync(key: string, value: string | null) {
+export async function setStorageItemAsync(key: string, value: string | null): Promise<void> {
   if (Platform.OS === "web") {
     try {
       if (value === null) {
@@ -21,20 +21,19 @@ export async function setStorageItemAsync(key: string, value: string | null) {
   }
 }
 
-export function useStorageState(key: string): string | null {
+export function useStorageState(key: string): Promise<string | null> {
   if (Platform.OS === "web") {
     try {
       if (typeof localStorage !== "undefined") {
-        return localStorage.getItem(key);
+        return Promise.resolve(localStorage.getItem(key));
       }
     } catch (e) {
       console.error("Local storage is unavailable:", e);
+      return Promise.reject(e);
     }
   } else {
-    SecureStore.getItemAsync(key).then(value => {
-      return value;
-    });
+    return SecureStore.getItemAsync(key);
   }
 
-  return null
+  return Promise.resolve(null);
 }
