@@ -12,6 +12,7 @@ import BasePage from "@/app.base";
 import { photo_profile_default } from "@/assets";
 import { auth } from '@/config/firebaseConfig';
 import { User } from 'firebase/auth';
+import { useStorageState } from '@/utils/useStorageState';
 
 type errors = {
     status: boolean,

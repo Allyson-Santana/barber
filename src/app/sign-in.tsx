@@ -3,6 +3,7 @@ import { View, Text, TextInput, Button, StyleSheet } from 'react-native';
 import { useAuth } from '@/context/AuthContext';
 import { router } from 'expo-router';
 
+
 export default function LoginScreen() {
     const [email, setEmail] = useState<string>('');
     const [password, setPassword] = useState<string>('');
@@ -11,7 +12,9 @@ export default function LoginScreen() {
     const handleSignIn = async () => {
         const result = await onSignIn(email, password);
         if (result) return router.replace("/home/");
-    } 
+    }
+
+    const handleNavigateSignUp = () => router.replace("/sign-up");
 
     return (
         <View style={styles.container}>
@@ -32,6 +35,10 @@ export default function LoginScreen() {
                 placeholder="Digite sua senha"
             />
             <Button title="Login" onPress={handleSignIn} />
+
+            <Text style={{ textAlign: 'center', marginTop: 20 }} onPress={handleNavigateSignUp}>
+                Criar minha conta
+            </Text>
         </View>
     );
 };

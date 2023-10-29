@@ -5,7 +5,12 @@ import {
     useEffect,
     useState
 } from "react";
-import { signInWithEmailAndPassword, createUserWithEmailAndPassword } from "firebase/auth";
+import { 
+    signInWithEmailAndPassword, 
+    createUserWithEmailAndPassword, 
+    updateProfile ,
+    updatePhoneNumber,
+} from "firebase/auth";
 import { auth } from "@/config/firebaseConfig"
 import { setStorageItemAsync, useStorageState } from "@/utils/useStorageState";
 
@@ -16,7 +21,12 @@ type Tuser = {
 
 interface Tcontext {
     onSignIn: (email: string, password: string) => Promise<boolean>;
-    onRegister: (email: string, password: string) => Promise<boolean>;
+    onRegister: (
+        email: string,
+        password: string, 
+        displayName: string,
+        phoneNumber: string
+    ) => Promise<boolean>;
     onSignOut: () => Promise<boolean>;
     authState: Tuser;
 }
@@ -44,21 +54,25 @@ export function AuthProvider({ children }: BasePageProps) {
     });
 
     useEffect(() => {
-        useStorageState(TOKEN).then(token => {
-            if (token) {
-                setAuthState({
-                    authenticated: true,
-                    token: token
-                });
-            }
-        });
+        const unsubscribe = () => {
+            useStorageState(TOKEN).then(token => {
+                if (token) {
+                    setAuthState({
+                        authenticated: true,
+                        token: token
+                    });
+                }
+            }).catch(error => {
+                console.log(error)
+            });
+        }
+        return () => unsubscribe();
     }, [])
 
     const handleSignIn = async (email: string, password: string): Promise<boolean> => {
         try {
             const userCredential = await signInWithEmailAndPassword(auth, email, password);
-            const user = userCredential.user
-            const token = await user.getIdToken();
+            const token = await userCredential.user.getIdToken();
 
             setStorageItemAsync(TOKEN, token)
             setAuthState({ authenticated: true, token: token });
@@ -73,10 +87,25 @@ export function AuthProvider({ children }: BasePageProps) {
         }
     }
 
-    const handleRegister = async (email: string, password: string): Promise<boolean> => {
+    const handleRegister = async (
+            email: string, 
+            password: string, 
+            displayName: string,
+            phoneNumber:  string 
+        ): Promise<boolean> => {
         try {
             const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+            const { user } = userCredential
+            await updateProfile(user, { displayName });
             
+            // await updatePhoneNumber(user, phoneNumber)
+ 
+            const token = await userCredential.user.getIdToken();
+
+            setStorageItemAsync(TOKEN, token)
+            setAuthState({ authenticated: true, token: token });
+        
+
             return true
         } catch (error: any) {
             console.error("ERROR <handleRegister>: ", error.stack);

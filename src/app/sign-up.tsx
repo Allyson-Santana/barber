@@ -1,29 +1,33 @@
 import React, { useState } from 'react';
 import { View, Text, TextInput, Button, StyleSheet } from 'react-native';
-import { createUserWithEmailAndPassword } from "firebase/auth";
-import { auth } from "@/config/firebaseConfig"
+import { useAuth } from '@/context/AuthContext';
+import { router } from 'expo-router';
 
 export default function LoginScreen() {
     const [email, setEmail] = useState<string>('');
     const [password, setPassword] = useState<string>('');
+    const [displayName, setDisplayName] = useState<string>('');
+    const [phoneNumber, setPhoneNumber] = useState<string>('');
 
-    const handleSignUp = () => {
-        createUserWithEmailAndPassword(auth, email, password)
-            .then((userCredential) => {
-                // const user = userCredential.user
-                console.log(userCredential);
-            })
-            .catch((error) => {
-                const errorCode = error.code;
-                const errorMessage = error.message;
-                // TODO: error handling and preview Error for user
-                console.error({ errorCode, errorMessage })
-            });
-    };
+    const { onRegister } = useAuth();
+
+    const handleSignUp = async () => {
+        const result = await onRegister(email, password, displayName, phoneNumber);
+        if (result) return router.replace("/home/");
+    } 
+
+    const handleNavigateSignIn = () => router.replace("/sign-in");
 
     return (
         <View style={styles.container}>
             <Text style={{ textAlign: 'center', marginBottom: 20 }}> CREATE USER </Text>
+            <Text style={styles.label}>Nome:</Text>
+            <TextInput
+                style={styles.input}
+                value={displayName}
+                onChangeText={setDisplayName}
+                placeholder="Digite seu nome"
+            />
             <Text style={styles.label}>Email:</Text>
             <TextInput
                 style={styles.input}
@@ -39,7 +43,12 @@ export default function LoginScreen() {
                 secureTextEntry
                 placeholder="Digite sua senha"
             />
-            <Button title="Login" onPress={handleSignUp} />
+            <Button title="Criar" onPress={handleSignUp} />
+
+            <Text style={{ textAlign: 'center', marginTop: 20 }} onPress={handleNavigateSignIn}>
+                Fazer Login
+            </Text>
+
         </View>
     );
 };
