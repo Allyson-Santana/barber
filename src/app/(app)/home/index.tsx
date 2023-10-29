@@ -1,8 +1,8 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import {
     StyleSheet,
+    Text,
     View,
-    Text
 } from "react-native";
 import BasePage from "@/app.base";
 import RecentSchedulingCard from "@components/recent-scheduling-card";
@@ -38,9 +38,7 @@ const dataMock = {
 }
 
 export default function Home() {
-
     // useEffect(() => { }, [])
-
     return (
         <BasePage>
             <View style={styles.container}>

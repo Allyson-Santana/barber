@@ -11,8 +11,8 @@ import * as ImagePicker from 'expo-image-picker';
 import BasePage from "@/app.base";
 import { photo_profile_default } from "@/assets";
 import { auth } from '@/config/firebaseConfig';
-import { User } from 'firebase/auth';
-import { useStorageState } from '@/utils/useStorageState';
+import { UserModel } from '@/@types/models';
+import { findUserById } from '@/services/UserService';
 
 type errors = {
     status: boolean,
@@ -23,14 +23,13 @@ type errors = {
     }
 }
 type propsPreviewErrors = Omit<errors, 'status'>;
-type user = Pick<User, 'displayName' | 'email' | 'phoneNumber'>
 
 export default function Profile() {
     const [photo, setPhoto] = useState<string>();
-    const [profileData, setProfileData] = useState<user>({
-        displayName: null,
-        email: null,
-        phoneNumber: null
+    const [profileData, setProfileData] = useState<UserModel>({
+        name: '',
+        email: '',
+        phoneNumber: ''
     })
 
     const handleChangeProfileData = (name: string, value: string) => {
@@ -46,24 +45,17 @@ export default function Profile() {
     })
 
     useEffect(() => {
-        const unsubscribe = auth.onAuthStateChanged(async (user) => {
+        const unsubscribe = () => auth.onAuthStateChanged(async (user) => {
             if (user) {
-                // O usuário está autenticado
-                const displayName = user.displayName || 'John Doe';
-                const email = user.email || 'john@example.com';
-                const phone = user.phoneNumber || '123-456-7890';
-
-                setProfileData({
-                    displayName: displayName,
-                    email: email,
-                    phoneNumber: phone,
-                });
+                const userData = await findUserById(user.uid);
+                if (userData) {
+                    setProfileData(userData);
+                }
             }
         });
 
-        return () => unsubscribe(); 
+        return unsubscribe(); 
     }, []);
-
 
 
     const _valitedEmail = (_email: string | null): boolean => {
@@ -85,16 +77,16 @@ export default function Profile() {
             errors: { name: [], email: [], phone: [] }
         }
 
-        if (!profileData.displayName) {
+        if (!profileData.name) {
             _errors.status = false
             _errors.errors.name.push("Nome é obrigatório.");
         } else {
-            if (profileData.displayName.length > 30) {
+            if (profileData.name.length > 30) {
                 _errors.status = false
                 _errors.errors.name.push("Nome excedeu o limite de 30 caracteres.");
             }
 
-            if (profileData.displayName.length < 3) {
+            if (profileData.name.length < 3) {
                 _errors.status = false
                 _errors.errors.name.push("Nome deve conte pelo menos 3 caracteres.");
             }
@@ -152,19 +144,19 @@ export default function Profile() {
 
                 <View style={styles.area_input}>
                     <TextInput
-                        value={profileData.displayName || ''}
+                        value={profileData.name}
                         onChangeText={text => handleChangeProfileData('name', text)}
                         placeholder="Nome"
                         style={styles.input}
                     />
                     <TextInput
-                        value={profileData.email || ''}
+                        value={profileData.email}
                         onChangeText={text => handleChangeProfileData('email', text)}
                         placeholder="E-mail"
                         style={styles.input}
                     />
                     <TextInput
-                        value={profileData.phoneNumber || ''}
+                        value={profileData.phoneNumber}
                         onChangeText={text => handleChangeProfileData('phone', text)}
                         placeholder="Telefone"
                         style={styles.input}

@@ -5,14 +5,14 @@ import {
     useEffect,
     useState
 } from "react";
-import { 
-    signInWithEmailAndPassword, 
-    createUserWithEmailAndPassword, 
-    updateProfile ,
-    updatePhoneNumber,
+import {
+    signInWithEmailAndPassword,
+    createUserWithEmailAndPassword,
 } from "firebase/auth";
-import { auth } from "@/config/firebaseConfig"
+import { auth, db } from "@/config/firebaseConfig"
+import { collection, addDoc, setDoc, doc } from "firebase/firestore";
 import { setStorageItemAsync, useStorageState } from "@/utils/useStorageState";
+import { createUser } from "@/services/UserService";
 
 type Tuser = {
     token: string | null,
@@ -23,8 +23,8 @@ interface Tcontext {
     onSignIn: (email: string, password: string) => Promise<boolean>;
     onRegister: (
         email: string,
-        password: string, 
-        displayName: string,
+        password: string,
+        name: string,
         phoneNumber: string
     ) => Promise<boolean>;
     onSignOut: () => Promise<boolean>;
@@ -88,23 +88,25 @@ export function AuthProvider({ children }: BasePageProps) {
     }
 
     const handleRegister = async (
-            email: string, 
-            password: string, 
-            displayName: string,
-            phoneNumber:  string 
-        ): Promise<boolean> => {
+        email: string,
+        password: string,
+        name: string,
+        phoneNumber: string
+    ): Promise<boolean> => {
+
         try {
             const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-            const { user } = userCredential
-            await updateProfile(user, { displayName });
-            
-            // await updatePhoneNumber(user, phoneNumber)
- 
+
+            await createUser({
+                name: name,
+                email: email,
+                phoneNumber: phoneNumber,
+            }, userCredential.user.uid)
+
             const token = await userCredential.user.getIdToken();
 
             setStorageItemAsync(TOKEN, token)
             setAuthState({ authenticated: true, token: token });
-        
 
             return true
         } catch (error: any) {

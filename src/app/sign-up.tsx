@@ -6,13 +6,13 @@ import { router } from 'expo-router';
 export default function LoginScreen() {
     const [email, setEmail] = useState<string>('');
     const [password, setPassword] = useState<string>('');
-    const [displayName, setDisplayName] = useState<string>('');
+    const [name, setName] = useState<string>('');
     const [phoneNumber, setPhoneNumber] = useState<string>('');
 
     const { onRegister } = useAuth();
 
     const handleSignUp = async () => {
-        const result = await onRegister(email, password, displayName, phoneNumber);
+        const result = await onRegister(email, password, name, phoneNumber);
         if (result) return router.replace("/home/");
     } 
 
@@ -24,8 +24,8 @@ export default function LoginScreen() {
             <Text style={styles.label}>Nome:</Text>
             <TextInput
                 style={styles.input}
-                value={displayName}
-                onChangeText={setDisplayName}
+                value={name}
+                onChangeText={setName}
                 placeholder="Digite seu nome"
             />
             <Text style={styles.label}>Email:</Text>
