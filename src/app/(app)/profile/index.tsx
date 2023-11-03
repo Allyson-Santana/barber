@@ -126,7 +126,7 @@ export default function Profile() {
 
     const handleSave = () => {
         const isValid = _validateDataSave();
-        console.log(errors)
+        console.error(errors)
         if (!isValid) return;
         // TODO: Save Image in Database
     }

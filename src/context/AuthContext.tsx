@@ -63,7 +63,7 @@ export function AuthProvider({ children }: BasePageProps) {
                     });
                 }
             }).catch(error => {
-                console.log(error)
+                console.error(error)
             });
         }
         return () => unsubscribe();
