@@ -1,10 +1,5 @@
 
-import { Stack, Tabs } from "expo-router";
-import {
-    MaterialIcons,
-    FontAwesome,
-    AntDesign
-} from '@expo/vector-icons';
+import { Stack } from "expo-router";
 
 export default function TabRoutersLayout() {
     return (
