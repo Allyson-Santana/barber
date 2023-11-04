@@ -15,11 +15,13 @@ export async function findUserById(id: string): Promise<UserModel | null> {
 }
 
 export async function createUser(user: UserModel, id: string): Promise<void> {
-    await setDoc(doc(collection(db, "users"), id), {
-        name: user.name,
-        email: user.email,
-        phoneNumber: user.phoneNumber,
-    });
+  try {
+      await setDoc(doc(collection(db, "users"), id), {
+          ...user
+      });
+  } catch (error: any) {
+      throw new Error("Error create user: ", error);
+  }
 }
 
 

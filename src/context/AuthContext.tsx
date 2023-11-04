@@ -25,7 +25,7 @@ interface Tcontext {
         email: string,
         password: string,
         name: string,
-        phoneNumber: string
+        phone: string
     ) => Promise<boolean>;
     onSignOut: () => Promise<boolean>;
     authState: Tuser;
@@ -96,7 +96,7 @@ export function AuthProvider({ children }: BasePageProps) {
         email: string,
         password: string,
         name: string,
-        phoneNumber: string
+        phone: string
     ): Promise<boolean> => {
 
         try {
@@ -105,7 +105,7 @@ export function AuthProvider({ children }: BasePageProps) {
             await createUser({
                 name: name,
                 email: email,
-                phoneNumber: phoneNumber,
+                phone: phone,
             }, userCredential.user.uid)
 
             const token = await userCredential.user.getIdToken();
@@ -114,7 +114,7 @@ export function AuthProvider({ children }: BasePageProps) {
                 id: userCredential.user.uid,
                 name,
                 email,
-                phoneNumber,
+                phone,
             }
 
             if (userData) {

@@ -5,6 +5,6 @@ export type Id = {
 export type UserModel = {
     name: string
     email: string
-    phoneNumber: string
+    phone: string
     photoURL?: string
 }

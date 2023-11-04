@@ -7,12 +7,12 @@ export default function LoginScreen() {
     const [email, setEmail] = useState<string>('');
     const [password, setPassword] = useState<string>('');
     const [name, setName] = useState<string>('');
-    const [phoneNumber, setPhoneNumber] = useState<string>('');
+    const [phone, setPhone] = useState<string>('');
 
     const { onRegister } = useAuth();
 
     const handleSignUp = async () => {
-        const result = await onRegister(email, password, name, phoneNumber);
+        const result = await onRegister(email, password, name, phone);
         if (result) return router.replace("/home/");
     } 
 
@@ -38,8 +38,8 @@ export default function LoginScreen() {
             <Text style={styles.label}>Email:</Text>
             <TextInput
                 style={styles.input}
-                value={phoneNumber}
-                onChangeText={setPhoneNumber}
+                value={phone}
+                onChangeText={setPhone}
                 placeholder="Digite seu telefone"
             />
             <Text style={styles.label}>Senha:</Text>

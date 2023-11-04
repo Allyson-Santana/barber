@@ -34,12 +34,12 @@ export default function Profile() {
         id: '',
         name: '',
         email: '',
-        phoneNumber: '',
+        phone: '',
         photoURL: '',
     })
 
     const handleChangeProfileData = (name: string, value: string) => {
-        if (name === 'phoneNumber') {
+        if (name === 'phone') {
             // TODO: Format number to preview
         }
         setProfileData(prevState => ({ ...prevState, [name]: value }))
@@ -107,7 +107,7 @@ export default function Profile() {
             _errors.errors.email.push("E-mail informado é inválido.");
         }
 
-        let isValidPhone = _validatePhone(profileData.phoneNumber);
+        let isValidPhone = _validatePhone(profileData.phone);
         if (!isValidPhone) {
             _errors.status = false
             _errors.errors.phone.push("Número de celular inválido.");
@@ -170,8 +170,8 @@ export default function Profile() {
                         style={styles.input}
                     />
                     <TextInput
-                        value={profileData.phoneNumber}
-                        onChangeText={text => handleChangeProfileData('phoneNumber', text)}
+                        value={profileData.phone}
+                        onChangeText={text => handleChangeProfileData('phone', text)}
                         placeholder="Telefone"
                         style={styles.input}
                     />
