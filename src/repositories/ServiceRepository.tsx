@@ -1,6 +1,8 @@
 import { collection, doc, getDoc, getDocs } from "firebase/firestore";
 import { db } from "@/config/firebaseConfig";
-import { ServiceModel } from "@/@types/models";
+import { ServiceModel, Id } from "@/@types/models";
+
+type ServiceWithIdModel = ServiceModel & Id
 
 export async function findServiceById(id: string): Promise<ServiceModel | null> {
     const serviceDocRef = doc(db, 'services', id);
@@ -15,15 +17,15 @@ export async function findServiceById(id: string): Promise<ServiceModel | null> 
 }
 
 
-export async function findAllServices(): Promise<ServiceModel[]> {
+export async function findAllServices(): Promise<ServiceWithIdModel[]> {
     const servicesColRef = collection(db, 'services');
     const servicesSnapshot = await getDocs(servicesColRef);
 
-    const servicesList: ServiceModel[] = [];
+    const servicesList: ServiceWithIdModel[] = [];
 
     servicesSnapshot.forEach((doc) => {
         const serviceData = doc.data();
-        servicesList.push(serviceData as ServiceModel);
+        servicesList.push({ id: doc.id, ...serviceData } as ServiceWithIdModel);
     });
 
     return servicesList;

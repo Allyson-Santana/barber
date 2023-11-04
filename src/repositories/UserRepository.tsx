@@ -3,7 +3,7 @@ import { db } from "@/config/firebaseConfig";
 import { ClientModel } from "@/@types/models";
 
 export async function findUserById(id: string): Promise<ClientModel | null> {
-    const userDocRef = doc(db, 'users', id);
+    const userDocRef = doc(db, 'clients', id);
     const userDoc = await getDoc(userDocRef);
 
     if (userDoc.exists()) {
@@ -17,7 +17,7 @@ export async function findUserById(id: string): Promise<ClientModel | null> {
 
 export async function createUser(user: ClientModel, id: string): Promise<void> {
   try {
-      await setDoc(doc(collection(db, "users"), id), {
+      await setDoc(doc(collection(db, "clients"), id), {
           ...user
       });
   } catch (error: any) {
@@ -27,7 +27,7 @@ export async function createUser(user: ClientModel, id: string): Promise<void> {
 
 
 export async function updateUser(id: string, updateDate: Partial<ClientModel>): Promise<void | null> {
-    const userDocRef = doc(db, 'users', id);
+    const userDocRef = doc(db, 'clients', id);
     
     try {
         await updateDoc(userDocRef, { ...updateDate })        
