@@ -11,7 +11,8 @@ import {
 } from "firebase/auth";
 import { auth} from "@/config/firebaseConfig"
 import { setStorageItemAsync, useStorageState } from "@/utils/useStorageState";
-import { createUser } from "@/services/UserService";
+import { createUser, findUserById } from "@/services/UserService";
+import { Id, UserModel } from "@/@types/models";
 
 type Tuser = {
     token: string | null,
@@ -34,7 +35,11 @@ type BasePageProps = {
     children: ReactNode;
 }
 
-const TOKEN = "token";
+export const storageKeys = {
+    TOKEN: "token",
+    USER: "user",
+    IS_BARBER: "is_barber"
+};
 
 const AuthContext = createContext<Tcontext>({
     onSignIn: async () => false,
@@ -54,12 +59,9 @@ export function AuthProvider({ children }: BasePageProps) {
 
     useEffect(() => {
         const unsubscribe = () => {
-            useStorageState(TOKEN).then(token => {
+            useStorageState(storageKeys.TOKEN).then(token => {
                 if (token) {
-                    setAuthState({
-                        authenticated: true,
-                        token: token
-                    });
+                    setAuthState({ authenticated: true, token: token });
                 }
             }).catch(error => {
                 console.error(error)
@@ -72,9 +74,14 @@ export function AuthProvider({ children }: BasePageProps) {
         try {
             const userCredential = await signInWithEmailAndPassword(auth, email, password);
             const token = await userCredential.user.getIdToken();
+            const userData = await findUserById(userCredential.user.uid);
 
-            setStorageItemAsync(TOKEN, token)
-            setAuthState({ authenticated: true, token: token });
+            if (userData) {
+                setStorageItemAsync(storageKeys.TOKEN, token);
+                setStorageItemAsync(storageKeys.USER, JSON.stringify(userData));
+                setStorageItemAsync(storageKeys.IS_BARBER, String(userData.isBarber))
+                setAuthState({ authenticated: true, token: token });
+            }
 
             return true
         } catch (error: any) {
@@ -100,12 +107,25 @@ export function AuthProvider({ children }: BasePageProps) {
                 name: name,
                 email: email,
                 phoneNumber: phoneNumber,
+                isBarber: false
             }, userCredential.user.uid)
 
             const token = await userCredential.user.getIdToken();
 
-            setStorageItemAsync(TOKEN, token)
-            setAuthState({ authenticated: true, token: token });
+            const userData: UserModel & Id = {
+                id: userCredential.user.uid,
+                name,
+                email,
+                phoneNumber,
+                isBarber: false,
+            }
+
+            if (userData) {
+                setStorageItemAsync(storageKeys.TOKEN, token);
+                setStorageItemAsync(storageKeys.USER, JSON.stringify(userData));
+                setStorageItemAsync(storageKeys.IS_BARBER, String(userData.isBarber))
+                setAuthState({ authenticated: true, token: token });
+            }
 
             return true
         } catch (error: any) {
@@ -122,7 +142,7 @@ export function AuthProvider({ children }: BasePageProps) {
     const handleSignOut = async (): Promise<boolean> => {
         try {
             setAuthState({ authenticated: false, token: null });
-            setStorageItemAsync(TOKEN, null)
+            setStorageItemAsync(storageKeys.TOKEN, null)
             return true;
         } catch (error: any) {
             const errorCode = error.code;
