@@ -79,7 +79,6 @@ export function AuthProvider({ children }: BasePageProps) {
             if (userData) {
                 setStorageItemAsync(storageKeys.TOKEN, token);
                 setStorageItemAsync(storageKeys.USER, JSON.stringify(userData));
-                setStorageItemAsync(storageKeys.IS_BARBER, String(userData.isBarber))
                 setAuthState({ authenticated: true, token: token });
             }
 
@@ -107,7 +106,6 @@ export function AuthProvider({ children }: BasePageProps) {
                 name: name,
                 email: email,
                 phoneNumber: phoneNumber,
-                isBarber: false
             }, userCredential.user.uid)
 
             const token = await userCredential.user.getIdToken();
@@ -117,13 +115,11 @@ export function AuthProvider({ children }: BasePageProps) {
                 name,
                 email,
                 phoneNumber,
-                isBarber: false,
             }
 
             if (userData) {
                 setStorageItemAsync(storageKeys.TOKEN, token);
                 setStorageItemAsync(storageKeys.USER, JSON.stringify(userData));
-                setStorageItemAsync(storageKeys.IS_BARBER, String(userData.isBarber))
                 setAuthState({ authenticated: true, token: token });
             }
 

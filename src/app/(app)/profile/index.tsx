@@ -30,7 +30,7 @@ type propsPreviewErrors = Omit<errors, 'status'>;
 export default function Profile() {
     const { onSignOut } = useAuth();
 
-    const [profileData, setProfileData] = useState<Omit<UserModel, 'isBarber'> & Id>({
+    const [profileData, setProfileData] = useState<UserModel & Id>({
         id: '',
         name: '',
         email: '',
