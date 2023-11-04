@@ -11,8 +11,11 @@ import * as ImagePicker from 'expo-image-picker';
 import BasePage from "@/app.base";
 import { photo_profile_default } from "@/assets";
 import { auth } from '@/config/firebaseConfig';
-import { UserModel } from '@/@types/models';
+import { Id, UserModel } from '@/@types/models';
 import { findUserById } from '@/services/UserService';
+import { updateUser } from "@/services/UserService";
+import { useAuth } from "@/context/AuthContext";
+
 
 type errors = {
     status: boolean,
@@ -25,15 +28,18 @@ type errors = {
 type propsPreviewErrors = Omit<errors, 'status'>;
 
 export default function Profile() {
-    const [photo, setPhoto] = useState<string>();
-    const [profileData, setProfileData] = useState<UserModel>({
+    const { onSignOut } = useAuth();
+
+    const [profileData, setProfileData] = useState<UserModel & Id>({
+        id: '',
         name: '',
         email: '',
-        phoneNumber: ''
+        phoneNumber: '',
+        photoURL: ''
     })
 
     const handleChangeProfileData = (name: string, value: string) => {
-        if (name === 'phone') {
+        if (name === 'phoneNumber') {
             // TODO: Format number to preview
         }
         setProfileData(prevState => ({ ...prevState, [name]: value }))
@@ -49,12 +55,15 @@ export default function Profile() {
             if (user) {
                 const userData = await findUserById(user.uid);
                 if (userData) {
-                    setProfileData(userData);
+                    setProfileData({
+                        id: user.uid,
+                        ...userData
+                    });
                 }
             }
         });
 
-        return unsubscribe(); 
+        return unsubscribe();
     }, []);
 
 
@@ -91,7 +100,7 @@ export default function Profile() {
                 _errors.errors.name.push("Nome deve conte pelo menos 3 caracteres.");
             }
         }
-        
+
         let isValidEmail = _valitedEmail(profileData.email);
         if (!isValidEmail) {
             _errors.status = false
@@ -119,24 +128,29 @@ export default function Profile() {
 
         if (result.canceled) return;
 
-        setPhoto(result.assets[0].uri);
+        const photoURL = result.assets[0].uri
 
-        // TODO: Save Image in Database
+        await updateUser(profileData.id, { photoURL: photoURL })
+
+        setProfileData((prevState) => ({ ...prevState, photoURL: photoURL }));
+
     };
 
-    const handleSave = () => {
+    const handleSave = async () => {
         const isValid = _validateDataSave();
-        console.error(errors)
         if (!isValid) return;
-        // TODO: Save Image in Database
+        const { id, ...profileUpdate } = profileData
+        await updateUser(id, profileUpdate);
     }
+
+    const handleSignOut = () => onSignOut();
 
     return (
         <BasePage>
             <View style={styles.container}>
                 <TouchableOpacity onPress={handleChangeImage}>
                     <Image
-                        source={photo ? { uri: photo } : photo_profile_default}
+                        source={profileData.photoURL ? { uri: profileData.photoURL } : photo_profile_default}
                         style={styles.photo}
                     />
                     <Text style={styles.text_photo}>Foto de perfil</Text>
@@ -157,7 +171,7 @@ export default function Profile() {
                     />
                     <TextInput
                         value={profileData.phoneNumber}
-                        onChangeText={text => handleChangeProfileData('phone', text)}
+                        onChangeText={text => handleChangeProfileData('phoneNumber', text)}
                         placeholder="Telefone"
                         style={styles.input}
                     />
@@ -168,6 +182,10 @@ export default function Profile() {
                 <TouchableOpacity onPress={handleSave} style={styles.btn}>
                     <Text style={styles.text_btn}>Salvar</Text>
                 </TouchableOpacity>
+
+                <Text style={styles.signout} onPress={handleSignOut}>
+                    Sair
+                </Text>
 
             </View>
         </BasePage>
@@ -258,5 +276,11 @@ const styles = StyleSheet.create({
     text: {
         color: 'white',
         textAlign: 'center',
+    },
+    signout: { 
+        textAlign: 'center', 
+        marginTop: 50,
+        fontWeight: "800",
+        fontSize: 15
     }
 });

@@ -1,4 +1,4 @@
-import { collection, doc, getDoc, setDoc } from "firebase/firestore";
+import { collection, doc, getDoc, setDoc, updateDoc } from "firebase/firestore";
 import { db } from "@/config/firebaseConfig";
 import { UserModel } from "@/@types/models";
 
@@ -21,3 +21,15 @@ export async function createUser(user: UserModel, id: string): Promise<void> {
         phoneNumber: user.phoneNumber,
     });
 }
+
+
+export async function updateUser(id: string, updateDate: Partial<UserModel>): Promise<void | null> {
+    const userDocRef = doc(db, 'users', id);
+    
+    try {
+        await updateDoc(userDocRef, { ...updateDate })        
+    } catch (error: any) {
+        throw new Error("Error update user: ", error);
+    }
+}
+
