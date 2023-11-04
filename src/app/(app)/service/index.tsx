@@ -6,17 +6,43 @@ import {
 } from "react-native";
 import BasePage from "@/app.base";
 import { Link } from "expo-router";
+import { useEffect, useState } from "react";
+import { findAllServices } from "@/repositories/ServiceRepository";
+import { Id, ServiceModel } from "@/@types/models";
 
 export default function Service() {
+
+    const [services, setServices] = useState<(ServiceModel & Id)[]>();
+
+    useEffect(() => {
+        const unsubscribe = () => {
+            findAllServices()
+                .then(allServices => {
+                    setServices(allServices);
+                })
+                .catch((error: any) => {
+                    console.error("Error get all service: ", error);
+                })
+        }
+
+        return unsubscribe();
+    }, [])
+
     return (
         <BasePage>
             <View style={styles.container}>
-                <Text style={{marginBottom: 20}}>Service</Text>
+                <Text style={{ marginBottom: 20 }}>Serviços</Text>
 
-                <Link style={{marginBottom: 10}} href={"/service/1"}>Servico number 1 (click aqui)</Link>
-                <Link style={{marginBottom: 10}} href={"/service/2"}>Servico number 2 (click aqui)</Link>
-                <Link style={{marginBottom: 10}} href={"/service/3"}>Servico number 3 (click aqui)</Link>
-                <Link style={{marginBottom: 10}} href={"/service/4"}>Servico number 4 (click aqui)</Link>
+                {services && services.map(service => (
+                    <Link
+                        key={service.id}
+                        style={{ marginBottom: 30 }}
+                        href={`/service/${service.id}`}
+                    >
+                        Nome: {service.name} | Duração: {service.duration_in_minute} Minutos
+                    </Link>
+                ))}
+
             </View>
         </BasePage>
     )
