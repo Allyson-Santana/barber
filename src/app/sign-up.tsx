@@ -33,7 +33,14 @@ export default function LoginScreen() {
                 style={styles.input}
                 value={email}
                 onChangeText={setEmail}
-                placeholder="Digite seu email"
+                placeholder="Digite seu Email"
+            />
+            <Text style={styles.label}>Email:</Text>
+            <TextInput
+                style={styles.input}
+                value={phoneNumber}
+                onChangeText={setPhoneNumber}
+                placeholder="Digite seu telefone"
             />
             <Text style={styles.label}>Senha:</Text>
             <TextInput
