@@ -9,8 +9,7 @@ import {
     signInWithEmailAndPassword,
     createUserWithEmailAndPassword,
 } from "firebase/auth";
-import { auth, db } from "@/config/firebaseConfig"
-import { collection, addDoc, setDoc, doc } from "firebase/firestore";
+import { auth} from "@/config/firebaseConfig"
 import { setStorageItemAsync, useStorageState } from "@/utils/useStorageState";
 import { createUser } from "@/services/UserService";
 
