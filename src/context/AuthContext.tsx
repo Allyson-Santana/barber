@@ -11,8 +11,8 @@ import {
 } from "firebase/auth";
 import { auth} from "@/config/firebaseConfig"
 import { setStorageItemAsync, useStorageState } from "@/utils/useStorageState";
-import { createUser, findUserById } from "@/services/UserService";
-import { Id, UserModel } from "@/@types/models";
+import { createUser, findUserById } from "@/repositories/UserRepository";
+import { Id, ClientModel } from "@/@types/models";
 
 type Tuser = {
     token: string | null,
@@ -110,7 +110,7 @@ export function AuthProvider({ children }: BasePageProps) {
 
             const token = await userCredential.user.getIdToken();
 
-            const userData: UserModel & Id = {
+            const userData: ClientModel & Id = {
                 id: userCredential.user.uid,
                 name,
                 email,

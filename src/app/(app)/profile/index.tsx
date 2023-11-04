@@ -11,9 +11,8 @@ import * as ImagePicker from 'expo-image-picker';
 import BasePage from "@/app.base";
 import { photo_profile_default } from "@/assets";
 import { auth } from '@/config/firebaseConfig';
-import { Id, UserModel } from '@/@types/models';
-import { findUserById } from '@/services/UserService';
-import { updateUser } from "@/services/UserService";
+import { Id, ClientModel } from '@/@types/models';
+import { findUserById, updateUser } from '@/repositories/UserRepository';
 import { useAuth } from "@/context/AuthContext";
 
 
@@ -30,7 +29,7 @@ type propsPreviewErrors = Omit<errors, 'status'>;
 export default function Profile() {
     const { onSignOut } = useAuth();
 
-    const [profileData, setProfileData] = useState<UserModel & Id>({
+    const [profileData, setProfileData] = useState<ClientModel & Id>({
         id: '',
         name: '',
         email: '',
