@@ -1,10 +1,7 @@
 import { Timestamp } from "firebase/firestore"
 
-export type Id = {
-    id: string
-}
-
 export type ClientModel = {
+    id: string
     name: string
     email: string
     phone: string
@@ -12,11 +9,13 @@ export type ClientModel = {
 }
 
 export type ServiceModel = {
+    id: string
     name: string
     duration_in_minute: number
 }
 
 export type BarberModel = {
+    id: string
     name: string
     cpf: string
     phone: string
@@ -24,8 +23,10 @@ export type BarberModel = {
 }
 
 export type SchedulingModel = {
+    id: string
     date: Timestamp
-    client: ClientModel & Id
-    service: ServiceModel & Id
-    barber: BarberModel & Id
+    client: ClientModel
+    service: ServiceModel
+    barber: BarberModel
+    stars: number
 }

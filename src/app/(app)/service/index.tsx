@@ -8,11 +8,11 @@ import BasePage from "@/app.base";
 import { Link } from "expo-router";
 import { useEffect, useState } from "react";
 import { findAllServices } from "@/repositories/ServiceRepository";
-import { Id, ServiceModel } from "@/@types/models";
+import { ServiceModel } from "@/@types/models";
 
 export default function Service() {
 
-    const [services, setServices] = useState<(ServiceModel & Id)[]>();
+    const [services, setServices] = useState<(ServiceModel)[]>();
 
     useEffect(() => {
         const unsubscribe = () => {

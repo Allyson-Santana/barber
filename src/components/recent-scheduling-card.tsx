@@ -1,23 +1,20 @@
 import { StyleSheet, View, Text } from "react-native";
 import { FontAwesome } from '@expo/vector-icons';
 import { textTruncation } from "../utils/formatText";
+import { BarberModel, ServiceModel } from "@/@types/models";
 
 type props = {
-    id: number,
-    service_name: string,
-    stars: number,
-    responsible: string,
+    id: string;
+    barber: BarberModel;
+    service: ServiceModel;     
+    stars: number;
 }
 
-type data = Omit<props, 'stars'> & {
-    stars: number[],
-}
-
-export default function RecentSchedulingCard({ id, responsible, service_name, stars }: props) {
-    const data: data = {
+export default function RecentSchedulingCard({ id, barber, service, stars }: props) {
+    const data = {
         id,
-        service_name: textTruncation(service_name, 48),
-        responsible: textTruncation(responsible, 22),
+        service_name: textTruncation(service.name, 48),
+        barber_name: textTruncation(barber.name, 22),
         stars: Array.from({ length: stars }, (_, index) => index)
     }
 
@@ -25,7 +22,7 @@ export default function RecentSchedulingCard({ id, responsible, service_name, st
         <View style={styles.container}>
             <Text style={styles.title}>{data.service_name}</Text>
             <View style={styles.overview}>
-                <Text style={styles.responsible}>{data.responsible}</Text>
+                <Text style={styles.responsible}>{data.barber_name}</Text>
                 <View style={styles.starts}>
                     {data.stars.map((index) =>
                         <FontAwesome key={`stars-${data.id.toString()}-${index}`}

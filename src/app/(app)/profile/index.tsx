@@ -11,7 +11,7 @@ import * as ImagePicker from 'expo-image-picker';
 import BasePage from "@/app.base";
 import { photo_profile_default } from "@/assets";
 import { auth } from '@/config/firebaseConfig';
-import { Id, ClientModel } from '@/@types/models';
+import { ClientModel } from '@/@types/models';
 import { findUserById, updateUser } from '@/repositories/UserRepository';
 import { useAuth } from "@/context/AuthContext";
 
@@ -29,7 +29,7 @@ type propsPreviewErrors = Omit<errors, 'status'>;
 export default function Profile() {
     const { onSignOut } = useAuth();
 
-    const [profileData, setProfileData] = useState<ClientModel & Id>({
+    const [profileData, setProfileData] = useState<ClientModel>({
         id: '',
         name: '',
         email: '',
@@ -54,10 +54,7 @@ export default function Profile() {
             if (user) {
                 const userData = await findUserById(user.uid);
                 if (userData) {
-                    setProfileData({
-                        id: user.uid,
-                        ...userData
-                    });
+                    setProfileData(userData);
                 }
             }
         });
@@ -129,9 +126,10 @@ export default function Profile() {
 
         const photoURL = result.assets[0].uri
 
-        await updateUser(profileData.id, { photoURL: photoURL })
-
-        setProfileData((prevState) => ({ ...prevState, photoURL: photoURL }));
+        if (profileData.id){
+            await updateUser(profileData.id, { photoURL: photoURL })
+            setProfileData((prevState) => ({ ...prevState, photoURL: photoURL }));
+        }
 
     };
 
@@ -139,7 +137,10 @@ export default function Profile() {
         const isValid = _validateDataSave();
         if (!isValid) return;
         const { id, ...profileUpdate } = profileData
-        await updateUser(id, profileUpdate);
+
+        if (id) {
+            await updateUser(id, profileUpdate);
+        }
     }
 
     const handleSignOut = () => onSignOut();

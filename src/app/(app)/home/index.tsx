@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import {
     StyleSheet,
     Text,
@@ -7,6 +7,8 @@ import {
 import BasePage from "@/app.base";
 import RecentSchedulingCard from "@components/recent-scheduling-card";
 import CurrentSchedulingCard from "@components/current-scheduling-card";
+import { findAllSchedulings, findRecentSchedulings } from '@/repositories/schedulingRepository';
+import { SchedulingModel } from '@/@types/models';
 
 const dataMock = {
     recente_scheduling_card: [
@@ -38,17 +40,26 @@ const dataMock = {
 }
 
 export default function Home() {
-    // useEffect(() => { }, [])
+    const [schedulings, setSchedulings] = useState<SchedulingModel[]>();
+
+    useEffect(() => {
+        const unsubscribe = () => {
+            findRecentSchedulings(3)
+            .then(response => setSchedulings(response))
+            .catch(error => console.error("Error get all schedulings: ", error))
+        }
+        return unsubscribe();
+    }, [])
     return (
         <BasePage>
             <View style={styles.container}>
                 <View style={styles.recent_scheduling}>
-                    {dataMock.recente_scheduling_card.map((dataCard, index) =>
-                        <RecentSchedulingCard key={`recent-card-${dataCard.id.toString()}-${index}`}
-                            id={dataCard.id}
-                            responsible={dataCard.responsible}
-                            service_name={dataCard.service_name}
-                            stars={dataCard.stars}
+                    {schedulings && schedulings.map((scheduling, index) =>
+                        <RecentSchedulingCard key={`recent-card-${scheduling.id.toString()}-${index}`}
+                            id={scheduling.id}
+                            barber={scheduling.barber}
+                            service={scheduling.service}
+                            stars={scheduling.stars}
                         />
                     )}
                 </View>
