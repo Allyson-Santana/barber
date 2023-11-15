@@ -1,20 +1,21 @@
+import { BarberModel, SchedulingModel, ServiceModel } from "@/@types/models";
 import { StyleSheet, View, Text } from "react-native";
 
 type props = {
-    id: number,
-    date: Date,
-    service_name: string,
-    responsible: string,
+    id: string;
+    barber: BarberModel;
+    service: ServiceModel;
+    date: any
 }
 
-export default function CurrentSchedulingCard({ responsible, service_name, date }: props) {
+export default function CurrentSchedulingCard({ id, barber, service, date }: props) {
     // TODO: If string length contains more thatn 15 chars, should minimize here!
 
     return (
         <View style={styles.container}>
             <Text style={styles.title}>Meu agendamento</Text>
-            <Text style={styles.text}>{service_name} - {responsible}</Text>
-            <Text style={styles.text}>{date.toISOString()}</Text>
+            <Text style={styles.text}>{service.name} - {barber.name}</Text>
+            <Text style={styles.text}>{String(date)}</Text>
         </View>
     )
 }

@@ -7,8 +7,10 @@ import {
 import BasePage from "@/app.base";
 import RecentSchedulingCard from "@components/recent-scheduling-card";
 import CurrentSchedulingCard from "@components/current-scheduling-card";
-import { findAllSchedulings, findRecentSchedulings } from '@/repositories/schedulingRepository';
+import { findAllSchedulings, findCurrentScheduling, findRecentSchedulings } from '@/repositories/schedulingRepository';
 import { SchedulingModel } from '@/@types/models';
+import { useStorageState } from '@/utils/useStorageState';
+import { storageKeys } from '@/context/AuthContext';
 
 const dataMock = {
     recente_scheduling_card: [
@@ -41,12 +43,24 @@ const dataMock = {
 
 export default function Home() {
     const [schedulings, setSchedulings] = useState<SchedulingModel[]>();
+    const [currentscheduling, setCurrentScheduling] = useState<SchedulingModel>();
 
     useEffect(() => {
         const unsubscribe = () => {
             findRecentSchedulings(3)
-            .then(response => setSchedulings(response))
-            .catch(error => console.error("Error get all schedulings: ", error))
+                .then(response => setSchedulings(response))
+                .catch(error => console.error("Error get all schedulings: ", error))
+
+            useStorageState(storageKeys.USER)
+                .then(async (user) => {
+                    if (user) {
+                        const scheduling = await findCurrentScheduling(user.id);
+                        if (scheduling) {
+                            setCurrentScheduling(scheduling)
+                        }
+                    }
+                })
+                .catch(error => console.error("Error get current schedulings: ", error))
         }
         return unsubscribe();
     }, [])
@@ -63,15 +77,17 @@ export default function Home() {
                         />
                     )}
                 </View>
-
-                <View style={styles.current_scheduling}>
-                    <CurrentSchedulingCard
-                        id={dataMock.current_scheduling_card.id}
-                        date={dataMock.current_scheduling_card.date}
-                        responsible={dataMock.current_scheduling_card.responsible}
-                        service_name={dataMock.current_scheduling_card.service_name}
-                    />
-                </View>
+                {currentscheduling &&
+                    <View style={styles.current_scheduling}>
+                        <CurrentSchedulingCard
+                            key={currentscheduling.id}
+                            id={currentscheduling.id}
+                            date={currentscheduling.date}
+                            barber={currentscheduling.barber}
+                            service={currentscheduling.service}
+                        />
+                    </View>
+                }
             </View>
         </BasePage>
     )

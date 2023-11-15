@@ -9,10 +9,10 @@ import {
     signInWithEmailAndPassword,
     createUserWithEmailAndPassword,
 } from "firebase/auth";
-import { auth} from "@/config/firebaseConfig"
+import { auth } from "@/config/firebaseConfig"
 import { setStorageItemAsync, useStorageState } from "@/utils/useStorageState";
 import { createUser, findUserById } from "@/repositories/UserRepository";
-import { Id, ClientModel } from "@/@types/models";
+import { ClientModel } from "@/@types/models";
 
 type Tuser = {
     token: string | null,
@@ -78,7 +78,9 @@ export function AuthProvider({ children }: BasePageProps) {
 
             if (userData) {
                 setStorageItemAsync(storageKeys.TOKEN, token);
-                setStorageItemAsync(storageKeys.USER, JSON.stringify(userData));
+                setStorageItemAsync(storageKeys.USER, JSON.stringify({ 
+                    ...userData, id: userCredential.user.uid 
+                }));
                 setAuthState({ authenticated: true, token: token });
             }
 
@@ -110,7 +112,7 @@ export function AuthProvider({ children }: BasePageProps) {
 
             const token = await userCredential.user.getIdToken();
 
-            const userData: ClientModel & Id = {
+            const userData: ClientModel = {
                 id: userCredential.user.uid,
                 name,
                 email,

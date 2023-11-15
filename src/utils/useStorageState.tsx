@@ -22,14 +22,24 @@ export async function setStorageItemAsync(key: string, value: string | null): Pr
   }
 }
 
-export function useStorageState(key: string): Promise<string | null> {
+export function useStorageState(key: string): Promise<any> {
   try {
     if (Platform.OS === "web") {
       if (typeof localStorage !== "undefined") {
-        return Promise.resolve(localStorage.getItem(key));
+        return Promise.resolve(localStorage.getItem(key)).then(value => {
+          if (value) {
+            return JSON.parse(value);
+          }
+          return null
+        });
       }
     } else {
-      return Promise.resolve(AsyncStorage.getItem(key));
+      return Promise.resolve(AsyncStorage.getItem(key)).then(value => {
+        if (value) {
+          return JSON.parse(value);
+        }
+        return null
+      });
     }
   } catch (e) {
     console.error("Local storage is unavailable:", e);

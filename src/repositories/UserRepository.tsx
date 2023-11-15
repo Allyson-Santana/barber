@@ -17,7 +17,7 @@ export async function findUserById(id: string): Promise<ClientModel | null> {
 }
 
 
-export async function createUser(user: ClientModel, id: string): Promise<void> {
+export async function createUser(user: Omit<ClientModel, 'id'>, id: string): Promise<void> {
   try {
       await setDoc(doc(collection(db, db_document), id), {
           ...user

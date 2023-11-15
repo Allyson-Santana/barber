@@ -29,4 +29,7 @@ export type SchedulingModel = {
     service: ServiceModel
     barber: BarberModel
     stars: number
+    status: SchedulingStatus
 }
+
+export type SchedulingStatus = "open" | "close" | "canceled"

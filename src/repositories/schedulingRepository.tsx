@@ -1,4 +1,4 @@
-import { QuerySnapshot, collection, doc, getDoc, getDocs, limitToLast, orderBy, query } from "firebase/firestore";
+import { QuerySnapshot, collection, doc, getDoc, getDocs, limit, orderBy, query, where } from "firebase/firestore";
 import { db } from "@/config/firebaseConfig";
 import { BarberModel, ClientModel, SchedulingModel, ServiceModel } from "@/@types/models";
 
@@ -25,14 +25,35 @@ export async function findAllSchedulings(): Promise<SchedulingModel[]> {
     return await (_schedulingMap(schedulingsSnapshot));
 }
 
-export async function findRecentSchedulings(limit: number): Promise<SchedulingModel[]> {
+export async function findRecentSchedulings(_limit: number): Promise<SchedulingModel[]> {
     const schedulingsColRef = collection(db, db_document);
 
     const schedulingsSnapshot = await getDocs(
-        query(schedulingsColRef, orderBy('date', 'desc'), limitToLast(limit))
+        query(schedulingsColRef, orderBy('date', 'desc'), limit(_limit))
     );
 
-    return await (_schedulingMap(schedulingsSnapshot));
+    return (await _schedulingMap(schedulingsSnapshot));
+}   
+
+
+export async function findCurrentScheduling(clientId: string): Promise<SchedulingModel | null> {
+    const schedulingsColRef = collection(db, db_document);
+
+    console.log(clientId)
+    const schedulingsSnapshot = await getDocs(
+        query(
+            schedulingsColRef,
+            where('status', '==', 'open'),
+            where('client.id', '==', clientId),
+            orderBy('date', 'desc'),
+            limit(1)
+        )
+    );
+    console.log(clientId, schedulingsSnapshot)
+    
+    const schedulings = await _schedulingMap(schedulingsSnapshot);
+
+    return schedulings.length > 0 ? schedulings[0] : null;
 }
 
 
@@ -55,6 +76,7 @@ async function _schedulingMap(schedulingsSnapshot: QuerySnapshot): Promise<Sched
             id: doc.id,
             date: schedulingData.date,
             stars: schedulingData.stars,
+            status: schedulingData.status,
             client: { ...clientData, id: clientDoc.id },
             service: { ...serviceData, id: serviceDoc.id },
             barber: { ...barberData, id: barberDoc.id },
