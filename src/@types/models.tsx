@@ -32,4 +32,4 @@ export type SchedulingModel = {
     status: SchedulingStatus
 }
 
-export type SchedulingStatus = "open" | "close" | "canceled"
+export type SchedulingStatus = "open" | "close"
