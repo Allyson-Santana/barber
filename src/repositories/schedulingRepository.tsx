@@ -25,7 +25,7 @@ export async function findAllSchedulings(): Promise<SchedulingModel[]> {
     return await (_schedulingMap(schedulingsSnapshot));
 }
 
-export async function findRecentSchedulings(_limit: number): Promise<SchedulingModel[]> {
+export async function findRecentSchedulings(_limit: number = 3): Promise<SchedulingModel[]> {
     const schedulingsColRef = collection(db, db_document);
 
     const schedulingsSnapshot = await getDocs(
@@ -39,7 +39,6 @@ export async function findRecentSchedulings(_limit: number): Promise<SchedulingM
 export async function findCurrentScheduling(clientId: string): Promise<SchedulingModel | null> {
     const schedulingsColRef = collection(db, db_document);
 
-    console.log(clientId)
     const schedulingsSnapshot = await getDocs(
         query(
             schedulingsColRef,
@@ -49,8 +48,7 @@ export async function findCurrentScheduling(clientId: string): Promise<Schedulin
             limit(1)
         )
     );
-    console.log(clientId, schedulingsSnapshot)
-    
+       
     const schedulings = await _schedulingMap(schedulingsSnapshot);
 
     return schedulings.length > 0 ? schedulings[0] : null;
