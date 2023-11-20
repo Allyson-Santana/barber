@@ -3,6 +3,7 @@ import { db } from "@/config/firebaseConfig";
 import { BarberModel, ClientModel, SchedulingModel, ServiceModel } from "@/@types/models";
 
 const db_document = 'schedulings';
+const db_document_client = 'clients'
 
 export async function findSchedulingById(id: string): Promise<SchedulingModel | null> {
     const schedulingDocRef = doc(db, db_document, id);
@@ -38,17 +39,18 @@ export async function findRecentSchedulings(_limit: number = 3): Promise<Schedul
 
 export async function findCurrentScheduling(clientId: string): Promise<SchedulingModel | null> {
     const schedulingsColRef = collection(db, db_document);
+    const userDocRef = doc(db, db_document_client, clientId);
 
     const schedulingsSnapshot = await getDocs(
         query(
             schedulingsColRef,
             where('status', '==', 'open'),
-            where('client.id', '==', clientId),
+            where('client', '==', userDocRef),
             orderBy('date', 'desc'),
             limit(1)
         )
     );
-       
+
     const schedulings = await _schedulingMap(schedulingsSnapshot);
 
     return schedulings.length > 0 ? schedulings[0] : null;
@@ -72,7 +74,7 @@ async function _schedulingMap(schedulingsSnapshot: QuerySnapshot): Promise<Sched
 
         schedulingsList.push({
             id: doc.id,
-            date: schedulingData.date,
+            date: schedulingData.date.toDate().toISOString(),
             stars: schedulingData.stars,
             status: schedulingData.status,
             client: { ...clientData, id: clientDoc.id },

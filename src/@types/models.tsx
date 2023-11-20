@@ -24,7 +24,7 @@ export type BarberModel = {
 
 export type SchedulingModel = {
     id: string
-    date: Timestamp
+    date: string
     client: ClientModel
     service: ServiceModel
     barber: BarberModel

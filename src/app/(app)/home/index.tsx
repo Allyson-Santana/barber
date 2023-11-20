@@ -7,7 +7,7 @@ import {
 import BasePage from "@/app.base";
 import RecentSchedulingCard from "@components/recent-scheduling-card";
 import CurrentSchedulingCard from "@components/current-scheduling-card";
-import { findAllSchedulings, findCurrentScheduling, findRecentSchedulings } from '@/repositories/schedulingRepository';
+import { findCurrentScheduling, findRecentSchedulings } from '@/repositories/schedulingRepository';
 import { ClientModel, SchedulingModel } from '@/@types/models';
 import { useStorageState } from '@/utils/useStorageState';
 import { storageKeys } from '@/context/AuthContext';
@@ -41,6 +41,21 @@ const dataMock = {
     },
 }
 
+const months = [
+    "Janeiro",
+    "Fevereiro",
+    "Março",
+    "Abril",
+    "Maio",
+    "Junho",
+    "Julho",
+    "Agosto",
+    "Setembro",
+    "Outubro",
+    "Novembro",
+    "Dezembro"
+]
+
 export default function Home() {
     const [schedulings, setSchedulings] = useState<SchedulingModel[]>();
     const [currentscheduling, setCurrentScheduling] = useState<SchedulingModel>();
@@ -57,7 +72,19 @@ export default function Home() {
                         const { id }: ClientModel = JSON.parse(user);
                         const scheduling = await findCurrentScheduling(id);
                         if (scheduling) {
-                            setCurrentScheduling(scheduling)
+                            const date = new Date(scheduling.date);
+
+                            const month = date.getMonth();
+                            const day = date.getDate() < 10 ? `0${date.getDate()}` : date.getDate();
+                            const hours = date.getHours();
+                            const minutes = date.getMinutes();
+
+                            const dateFormated = `${day} de ${months[month]} ás ${hours}:${minutes}`
+
+                            setCurrentScheduling({
+                                ...scheduling,
+                                date: dateFormated
+                            })
                         }
                     }
                 })
