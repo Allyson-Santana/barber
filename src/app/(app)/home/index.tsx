@@ -12,35 +12,6 @@ import { ClientModel, SchedulingModel } from '@/@types/models';
 import { useStorageState } from '@/utils/useStorageState';
 import { storageKeys } from '@/context/AuthContext';
 
-const dataMock = {
-    recente_scheduling_card: [
-        {
-            id: 1,
-            service_name: "Corte Social",
-            stars: 2,
-            responsible: "Allyson"
-        },
-        {
-            id: 2,
-            service_name: "Combo Social",
-            stars: 3,
-            responsible: "Vinicius"
-        },
-        {
-            id: 3,
-            service_name: "Barba",
-            stars: 4,
-            responsible: "Victor"
-        },
-    ],
-    current_scheduling_card: {
-        id: 3,
-        service_name: "Barba",
-        date: new Date(),
-        responsible: "Victor"
-    },
-}
-
 const months = [
     "Janeiro",
     "Fevereiro",
