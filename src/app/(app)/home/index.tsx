@@ -8,7 +8,7 @@ import BasePage from "@/app.base";
 import RecentSchedulingCard from "@components/recent-scheduling-card";
 import CurrentSchedulingCard from "@components/current-scheduling-card";
 import { findAllSchedulings, findCurrentScheduling, findRecentSchedulings } from '@/repositories/schedulingRepository';
-import { SchedulingModel } from '@/@types/models';
+import { ClientModel, SchedulingModel } from '@/@types/models';
 import { useStorageState } from '@/utils/useStorageState';
 import { storageKeys } from '@/context/AuthContext';
 
@@ -54,7 +54,8 @@ export default function Home() {
             useStorageState(storageKeys.USER)
                 .then(async (user) => {
                     if (user) {
-                        const scheduling = await findCurrentScheduling(user.id);
+                        const { id }: ClientModel = JSON.parse(user);
+                        const scheduling = await findCurrentScheduling(id);
                         if (scheduling) {
                             setCurrentScheduling(scheduling)
                         }

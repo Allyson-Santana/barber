@@ -58,16 +58,17 @@ export function AuthProvider({ children }: BasePageProps) {
     });
 
     useEffect(() => {
-        const unsubscribe = () => {
-            useStorageState(storageKeys.TOKEN).then(token => {
+        const unsubscribe = async () => {
+            try {
+                const token = await useStorageState(storageKeys.TOKEN);
                 if (token) {
                     setAuthState({ authenticated: true, token: token });
                 }
-            }).catch(error => {
-                console.error(error)
-            });
+            } catch (error) {
+                console.error(error);
+            }
         }
-        return () => unsubscribe();
+        unsubscribe();
     }, [])
 
     const handleSignIn = async (email: string, password: string): Promise<boolean> => {
