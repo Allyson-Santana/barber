@@ -63,7 +63,7 @@ export default function Service() {
                 <View style={styles.day_chose_card}>
                     <DayChoseCard/>
                 </View>
-                <View style={{backgroundColor:"#6e563f"}}>
+                <View style={{backgroundColor: "#1f547e"}}>
                     <View style={styles.barber_name_container}>
                         <FlatList
                             data={dataMock.barber}
@@ -130,7 +130,6 @@ const styles = StyleSheet.create({
     },
     barber_name_container: {
         padding: 10,
-        backgroundColor: "#6e563f",
         display: "flex",
         width: "100%"
     },
@@ -153,7 +152,6 @@ const styles = StyleSheet.create({
     },
     available_card_container: {
         paddingHorizontal: 20,
-        backgroundColor: "#6e563f",
         width: "100%",
         height: 400
     },
