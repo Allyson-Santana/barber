@@ -39,7 +39,7 @@ export default function RecentSchedulingCard({ id, barber, service, stars }: pro
 const styles = StyleSheet.create({
     container: {
         padding: 10,
-        backgroundColor: "#9e8360",
+        backgroundColor: "#1f547e",
         width: "85%",
         height: 90,
         borderRadius: 5,

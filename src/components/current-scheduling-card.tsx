@@ -23,7 +23,7 @@ export default function CurrentSchedulingCard({ id, barber, service, date }: pro
 const styles = StyleSheet.create({
     container: {
         padding: 10,
-        backgroundColor: "#6e563f",
+        backgroundColor: "#d3d3d3",
         width: "88%",
         height: 110,
         borderRadius: 5,
@@ -42,12 +42,12 @@ const styles = StyleSheet.create({
     title: {
         textAlign: "center",
         fontWeight: "800",
-        color: "#fff",
+        color: "#000000",
         padding: 5,
         fontSize: 18
     },
     text: {
-        color: "#fff",
+        color: "#000000",
         padding: 5,
         fontSize: 18
     }
