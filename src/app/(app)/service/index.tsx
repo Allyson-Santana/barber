@@ -8,18 +8,6 @@ import { router } from 'expo-router';
 
 export default function Service() {
   const [services, setServices] = useState<ServiceModel[]>([]);
-  //const _services: ServiceModel[] = [
-    /*{ id: '1', name: 'Corte Masculino' },
-    { id: '2', name: 'Pigmentação de barba' },
-    { id: '3', name: 'Corte Infantil' },
-    { id: '4', name: 'Barba' },
-    { id: '5', name: 'Barba + Corte' },
-    { id: '6', name: 'Penteado' },
-    { id: '7', name: 'Coloração' },
-    { id: '8', name: 'Hidratação' },   
-    { id: '9', name: 'Sobrancelha' },
-    { id: '10', name: 'Hidratação + Corte' },*/
-    // Adicione os outros serviços com suas IDs];
 
   useEffect(() => {
     const unsubscribe = () => {
