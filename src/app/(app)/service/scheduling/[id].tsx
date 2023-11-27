@@ -237,7 +237,7 @@ export default function scheduling() {
                         )}
                     </View>
                 </View>
-                <View style={{ backgroundColor: "#6e563f" }}>
+                <View style={styles.container_scheduling}>
                     <View style={styles.barber_name_container}>
                         <FlatList
                             data={barber}
@@ -297,6 +297,11 @@ const styles = StyleSheet.create({
         display: "flex",
         color: "#000000"
     },
+    container_scheduling: {
+        backgroundColor: "#1f547e",
+        borderRadius: 20,
+        height: "100%"
+    },
     day_chose_card: {
         width: "100%"
     },
@@ -326,7 +331,7 @@ const styles = StyleSheet.create({
         paddingHorizontal: 20,
         backgroundColor: "#1f547e",
         width: "100%",
-        height: 400
+        height: "50%"
     },
     barber_hour_container: {
         display: "flex",
