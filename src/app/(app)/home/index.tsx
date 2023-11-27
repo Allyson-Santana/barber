@@ -1,9 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import {
-    StyleSheet,
-    Text,
-    View,
-} from "react-native";
+import { StyleSheet, View} from "react-native";
 import BasePage from "@/app.base";
 import RecentSchedulingCard from "@components/recent-scheduling-card";
 import CurrentSchedulingCard from "@components/current-scheduling-card";
@@ -11,6 +7,8 @@ import { findCurrentScheduling, findRecentSchedulings } from '@/repositories/sch
 import { ClientModel, SchedulingModel } from '@/@types/models';
 import { useStorageState } from '@/utils/useStorageState';
 import { storageKeys } from '@/context/AuthContext';
+import { useIsFocused } from '@react-navigation/native';
+
 
 const months = [
     "Janeiro",
@@ -29,45 +27,66 @@ const months = [
 
 export default function Home() {
     const [schedulings, setSchedulings] = useState<SchedulingModel[]>();
-    const [currentscheduling, setCurrentScheduling] = useState<SchedulingModel>();
+    const [currentscheduling, setCurrentScheduling] = useState<SchedulingModel | null>(null);
+    const isFocused = useIsFocused();
+    const [pollingIntervalId, setPollingIntervalId] = useState<any>(null);
 
-    useEffect(() => {
-        const unsubscribe = () => {
-            findRecentSchedulings(3)
-                .then(response => setSchedulings(response))
-                .catch(error => console.error("Error get all schedulings: ", error))
+    const onInit = () => {
+        findRecentSchedulings(3)
+            .then(response => setSchedulings(response))
+            .catch(error => console.error("Error get all schedulings: ", error))
 
-            useStorageState(storageKeys.USER)
-                .then(async (user) => {
-                    if (user) {
-                        const { id }: ClientModel = JSON.parse(user);
-                        const scheduling = await findCurrentScheduling(id);
-                        if (scheduling) {
-                            const date = new Date(scheduling.date);
+        useStorageState(storageKeys.USER)
+            .then(async (user) => {
+                if (user) {
+                    const { id }: ClientModel = JSON.parse(user);
+                    const scheduling = await findCurrentScheduling(id);
+                    if (scheduling) {
+                        const date = new Date(scheduling.date);
 
-                            const month = date.getMonth();
-                            const day = date.getDate() < 10 ? `0${date.getDate()}` : date.getDate();
-                            const hours = date.getHours();
-                            const minutes = date.getMinutes();
+                        const month = date.getMonth();
+                        const day = date.getDate() < 10 ? `0${date.getDate()}` : date.getDate();
+                        const hours = date.getHours();
+                        const minutes = date.getMinutes() < 10 ? `0${date.getMinutes()}` : date.getMinutes();
+                        const dateFormated = `${day} de ${months[month]} ás ${hours}:${minutes}`
 
-                            const dateFormated = `${day} de ${months[month]} ás ${hours}:${minutes}`
-
-                            setCurrentScheduling({
-                                ...scheduling,
-                                date: dateFormated
-                            })
-                        }
+                        setCurrentScheduling({
+                            ...scheduling,
+                            date: dateFormated
+                        })
                     }
-                })
-                .catch(error => console.error("Error get current schedulings: ", error))
+                }
+            })
+            .catch(error => console.error("Error get current schedulings: ", error))
+    }
+    
+    useEffect(() => {
+        if (isFocused) {
+            onInit();
+            const intervalId = setInterval(() => {
+                onInit();
+            }, 10_000);
+            setPollingIntervalId(intervalId);
+        } else {
+            if (pollingIntervalId) {
+                clearInterval(pollingIntervalId);
+                setPollingIntervalId(null);
+            }
         }
-        return unsubscribe();
-    }, [])
+
+        return () => {
+            if (pollingIntervalId) {
+                clearInterval(pollingIntervalId);
+                setPollingIntervalId(null);
+            }
+        };
+    }, [isFocused]);
+
     return (
         <BasePage>
             <View style={styles.container}>
                 <View style={styles.recent_scheduling}>
-                    {schedulings && schedulings.map((scheduling, index) =>
+                    {schedulings?.length && schedulings.map((scheduling, index) =>
                         <RecentSchedulingCard key={`recent-card-${scheduling.id.toString()}-${index}`}
                             id={scheduling.id}
                             barber={scheduling.barber}

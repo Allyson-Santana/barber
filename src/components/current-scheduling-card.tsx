@@ -1,4 +1,4 @@
-import { BarberModel, SchedulingModel, ServiceModel } from "@/@types/models";
+import { BarberModel, ServiceModel } from "@/@types/models";
 import { StyleSheet, View, Text } from "react-native";
 
 type props = {
@@ -23,11 +23,11 @@ export default function CurrentSchedulingCard({ id, barber, service, date }: pro
 const styles = StyleSheet.create({
     container: {
         padding: 10,
-        backgroundColor: "#6e563f",
+        backgroundColor: "#d3d3d3",
         width: "88%",
         height: 110,
         borderRadius: 5,
-        marginBottom: 15,
+        marginBottom: 20,
         borderColor: "#000000",
         borderWidth: 1,
         shadowColor: "#000",
@@ -42,12 +42,12 @@ const styles = StyleSheet.create({
     title: {
         textAlign: "center",
         fontWeight: "800",
-        color: "#fff",
+        color: "#000000",
         padding: 5,
         fontSize: 18
     },
     text: {
-        color: "#fff",
+        color: "#000000",
         padding: 5,
         fontSize: 18
     }

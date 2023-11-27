@@ -1,4 +1,4 @@
-import {StyleSheet, View, TouchableOpacity, Text} from "react-native";
+import { StyleSheet, TouchableOpacity, Text } from "react-native";
 
 type props = {
     title: string,
@@ -7,8 +7,8 @@ type props = {
     titleStyle: any
 }
 
-export default function CustomButton({title, onPress, style, titleStyle}:props){
-    return(
+export default function CustomButton({ title, onPress, style, titleStyle }: props) {
+    return (
         <TouchableOpacity
             style={style ? style : styles.button}
             onPress={onPress}
