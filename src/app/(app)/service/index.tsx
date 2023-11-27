@@ -37,7 +37,7 @@ export default function Service() {
                     <Link
                         key={service.id}
                         style={{ marginBottom: 30 }}
-                        href={`/service/${service.id}`}
+                        href={`/service/scheduling/${service.id}`}
                     >
                         Nome: {service.name} | Duração: {service.duration_in_minute} Minutos
                     </Link>

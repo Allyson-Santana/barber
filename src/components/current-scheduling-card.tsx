@@ -1,4 +1,4 @@
-import { BarberModel, SchedulingModel, ServiceModel } from "@/@types/models";
+import { BarberModel, ServiceModel } from "@/@types/models";
 import { StyleSheet, View, Text } from "react-native";
 
 type props = {

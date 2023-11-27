@@ -1,9 +1,39 @@
-import { QuerySnapshot, collection, doc, getDoc, getDocs, limit, orderBy, query, where } from "firebase/firestore";
+import { QuerySnapshot, collection, doc, getDoc, getDocs, setDoc, limit, orderBy, query, where } from "firebase/firestore";
 import { db } from "@/config/firebaseConfig";
-import { BarberModel, ClientModel, SchedulingModel, ServiceModel } from "@/@types/models";
+import { BarberModel, ClientModel, SchedulingModel, ServiceModel, SchedulingStatus } from "@/@types/models";
 
 const db_document = 'schedulings';
 const db_document_client = 'clients'
+const db_document_service = 'services';
+const db_document_barber = 'barbers';
+
+export type CreateScheduling = {
+    date: string;
+    client: string;
+    service: string;
+    barber: string;
+    stars: number;
+    status: SchedulingStatus;
+}
+
+export async function createScheduling(scheduling: CreateScheduling): Promise<void> {
+    const clientDocRef = doc(db, db_document_client, scheduling.client);
+    const serviceDocRef = doc(db, db_document_service, scheduling.service);
+    const barberDocRef = doc(db, db_document_barber, scheduling.barber);
+    
+    try {
+        await setDoc(doc(collection(db, db_document)), {
+            client: clientDocRef,
+            barber: barberDocRef,
+            service: serviceDocRef,
+            date: scheduling.date,
+            status: "open",
+            stars: 0
+        });
+    } catch (error: any) {
+        throw new Error("Error create user: ", error);
+    }
+}
 
 export async function findSchedulingById(id: string): Promise<SchedulingModel | null> {
     const schedulingDocRef = doc(db, db_document, id);
@@ -74,7 +104,7 @@ async function _schedulingMap(schedulingsSnapshot: QuerySnapshot): Promise<Sched
 
         schedulingsList.push({
             id: doc.id,
-            date: schedulingData.date.toDate().toISOString(),
+            date: schedulingData.date,
             stars: schedulingData.stars,
             status: schedulingData.status,
             client: { ...clientData, id: clientDoc.id },

@@ -10,9 +10,9 @@ import { useAuth } from "@/context/AuthContext";
 export default function AppLayout() {
     const { authState } = useAuth();
 
-    if (!authState?.authenticated) {
-        return <Redirect href="/sign-in" />;
-    }
+    // if (!authState?.authenticated) {
+    //     return <Redirect href="/sign-in" />;
+    // }
 
     return (
         <Tabs screenOptions={{

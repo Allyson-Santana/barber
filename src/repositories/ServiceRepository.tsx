@@ -10,7 +10,7 @@ export async function findServiceById(id: string): Promise<ServiceModel | null> 
 
     if (serviceDoc.exists()) {
         const serviceData = serviceDoc.data();
-        return serviceData as ServiceModel;
+        return { ...serviceData, id: serviceDoc.id} as ServiceModel;
     }
 
     return null;
