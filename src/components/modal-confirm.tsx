@@ -5,7 +5,8 @@ import { View, Text, TouchableOpacity, Modal, StyleSheet } from 'react-native';
 const ConfirmationModal = ({ isVisible, scheduling, onConfirm, onCancel, onRequestClose }) => {
     const date = new Date(scheduling.datetime);
     const minutes = date.getMinutes();
-    const formattedHourAndMinutes = (`${date.getHours()}:${minutes < 10 ? `0${minutes}` : minutes}`);
+    const hour = date.getHours()
+    const formattedHourAndMinutes = (`${hour < 0 ? `0${hour}` : hour}:${minutes < 10 ? `0${minutes}` : minutes}`);
     const FormattedDate = `${date.toLocaleDateString()} ás ${formattedHourAndMinutes}`;
 
     return (
@@ -57,7 +58,7 @@ const styles = StyleSheet.create({
     },
     modalButton: {
         padding: 10,
-        backgroundColor: '#6e563f',
+        backgroundColor: '#1f547e',
         borderRadius: 5,
     },
     text: {

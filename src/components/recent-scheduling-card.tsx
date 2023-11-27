@@ -1,7 +1,8 @@
-import { StyleSheet, View, Text } from "react-native";
+import { StyleSheet, View, Text, TouchableOpacity } from "react-native";
 import { FontAwesome } from '@expo/vector-icons';
 import { textTruncation } from "../utils/formatText";
 import { BarberModel, ServiceModel } from "@/@types/models";
+import { router } from "expo-router";
 
 type props = {
     id: string;
@@ -18,8 +19,12 @@ export default function RecentSchedulingCard({ id, barber, service, stars }: pro
         stars: Array.from({ length: stars }, (_, index) => index)
     }
 
+    const handleRedirectToSchedeling = (id: string) => {
+        router.replace(`/service/scheduling/${id}`);
+    }
+
     return (
-        <View style={styles.container}>
+        <TouchableOpacity style={styles.container} onPress={() => handleRedirectToSchedeling(service.id)}>
             <Text style={styles.title}>{data.service_name}</Text>
             <View style={styles.overview}>
                 <Text style={styles.responsible}>{data.barber_name}</Text>
@@ -32,7 +37,7 @@ export default function RecentSchedulingCard({ id, barber, service, stars }: pro
                     )}
                 </View>
             </View>
-        </View>
+        </TouchableOpacity>
     )
 }
 

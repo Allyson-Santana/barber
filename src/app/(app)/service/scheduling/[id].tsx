@@ -1,4 +1,4 @@
-import { useLocalSearchParams } from "expo-router";
+import { router, useLocalSearchParams } from "expo-router";
 
 import {
     StyleSheet,
@@ -21,6 +21,7 @@ import { findServiceById } from "@/repositories/ServiceRepository";
 import { useStorageState } from "@/utils/useStorageState";
 import { storageKeys } from "@/context/AuthContext";
 import { findAllbarbers } from "@/repositories/BarberRepository";
+import { AntDesign } from "@expo/vector-icons";
 
 const fakeUsers = [
     {
@@ -167,11 +168,11 @@ export default function scheduling() {
                                 onPress={() => onSelectbarberhour(id, hour)}
                                 style={{
                                     ...styles.hour_button,
-                                    backgroundColor: (barberIdSelected === id && hourSelected === hour) ? "#6e563f" : "#fff",
+                                    backgroundColor: (barberIdSelected === id && hourSelected === hour) ? "#1f547e" : "#fff",
                                 }}
                                 titleStyle={{
                                     ...styles.hour_text,
-                                    color: (barberIdSelected === id && hourSelected === hour) ? "#fff" : "#6e563f",
+                                    color: (barberIdSelected === id && hourSelected === hour) ? "#fff" : "#1f547e",
                                 }}
                             />
                         )
@@ -210,8 +211,14 @@ export default function scheduling() {
             .catch(error => console.error("Error get current schedulings: ", error))
     }, []);
 
+    const backToService = () => {
+        router.replace("/(app)/service")
+    }
+
     return (
         <BasePage>
+            <AntDesign style={{paddingStart: 5}} name="back" size={24} onPress={() => backToService()} />
+            
             <View style={styles.container}>
                 <View style={styles.day_chose_card}>
                     <View style={styles.container_calendar}>
@@ -237,7 +244,7 @@ export default function scheduling() {
                         )}
                     </View>
                 </View>
-                <View style={{ backgroundColor: "#6e563f" }}>
+                <View style={styles.container_scheduling}>
                     <View style={styles.barber_name_container}>
                         <FlatList
                             data={barber}
@@ -247,11 +254,11 @@ export default function scheduling() {
                                     onPress={() => onFilterBarber(item.id)}
                                     style={{
                                         ...styles.barber_name_button,
-                                        backgroundColor: barberSelected === item.id ? "#6e563f" : "#fff",
+                                        backgroundColor: barberSelected === item.id ? "#1f547e" : "#fff",
                                     }}
                                     titleStyle={{
                                         ...styles.barber_name_text,
-                                        color: barberSelected === item.id ? "#fff" : "#6e563f",
+                                        color: barberSelected === item.id ? "#fff" : "#1f547e",
                                     }}
                                 />}
                             horizontal
@@ -297,12 +304,17 @@ const styles = StyleSheet.create({
         display: "flex",
         color: "#000000"
     },
+    container_scheduling: {
+        backgroundColor: "#1f547e",
+        borderRadius: 20,
+        height: "100%"
+    },
     day_chose_card: {
         width: "100%"
     },
     barber_name_container: {
         padding: 10,
-        backgroundColor: "#6e563f",
+        backgroundColor: "#1f547e",
         display: "flex",
         width: "100%"
     },
@@ -324,9 +336,9 @@ const styles = StyleSheet.create({
     },
     available_card_container: {
         paddingHorizontal: 20,
-        backgroundColor: "#6e563f",
+        backgroundColor: "#1f547e",
         width: "100%",
-        height: 400
+        height: "45%"
     },
     barber_hour_container: {
         display: "flex",
@@ -402,7 +414,7 @@ const styles = StyleSheet.create({
     },
     button: {
         paddingHorizontal: 30,
-        backgroundColor: "#6e563f",
+        backgroundColor: "#1f547e",
         width: "auto",
         height: 50,
         justifyContent: "center",
