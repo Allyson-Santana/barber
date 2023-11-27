@@ -47,8 +47,7 @@ export default function Home() {
                         const month = date.getMonth();
                         const day = date.getDate() < 10 ? `0${date.getDate()}` : date.getDate();
                         const hours = date.getHours();
-                        const minutes = date.getMinutes();
-
+                        const minutes = date.getMinutes() < 10 ? `0${date.getMinutes()}` : date.getMinutes();
                         const dateFormated = `${day} de ${months[month]} ás ${hours}:${minutes}`
 
                         setCurrentScheduling({
